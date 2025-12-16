@@ -59,10 +59,11 @@ export default class Hero {
     // Spacebar for jump
     this.spaceKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-    // Click/tap for jump
-    this.scene.input.on('pointerdown', () => {
+    // Click/tap for jump - store reference so we can remove it later
+    this.pointerdownHandler = () => {
       this.jump();
-    });
+    };
+    this.scene.input.on('pointerdown', this.pointerdownHandler);
   }
 
   jump() {
@@ -107,6 +108,10 @@ export default class Hero {
   }
 
   destroy() {
+    // Remove the pointerdown listener
+    if (this.pointerdownHandler) {
+      this.scene.input.off('pointerdown', this.pointerdownHandler);
+    }
     this.sprite.destroy();
   }
 }
