@@ -18,7 +18,7 @@ export default class GameOverScene extends Phaser.Scene {
     overlay.setOrigin(0, 0);
 
     // Game Over title
-    const gameOverText = this.add.text(width / 2, height / 3, 'GAME OVER!', {
+    const gameOverText = this.add.text(width / 2, height / 3 - 40, 'GAME OVER!', {
       font: 'bold 56px Arial',
       fill: '#ff0000',
       stroke: '#000000',
@@ -26,12 +26,39 @@ export default class GameOverScene extends Phaser.Scene {
     });
     gameOverText.setOrigin(0.5);
 
+    // Funny message
+    const funnyMessage = this.add.text(width / 2, height / 3 + 30, 'פופוטם! השמנת ב5 קילו!', {
+      font: 'bold 32px Arial',
+      fill: '#ff6b00',
+      stroke: '#000000',
+      strokeThickness: 4
+    });
+    funnyMessage.setOrigin(0.5);
+
+    const cryMessage = this.add.text(width / 2, height / 3 + 70, 'תבכי, כל דמעה זה גרם!', {
+      font: 'bold 28px Arial',
+      fill: '#ffaa00',
+      stroke: '#000000',
+      strokeThickness: 3
+    });
+    cryMessage.setOrigin(0.5);
+
     // Animate title
     this.tweens.add({
       targets: gameOverText,
       scale: { from: 0.5, to: 1 },
       duration: 500,
       ease: 'Bounce.easeOut'
+    });
+
+    // Animate funny messages
+    this.tweens.add({
+      targets: [funnyMessage, cryMessage],
+      alpha: { from: 0, to: 1 },
+      y: { from: '+=20', to: '-=20' },
+      duration: 800,
+      delay: 300,
+      ease: 'Back.easeOut'
     });
 
     // Final score
