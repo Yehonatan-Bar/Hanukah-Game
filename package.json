@@ -1,0 +1,20 @@
+{
+  "name": "hanukah-chase-game",
+  "version": "1.0.0",
+  "description": "A Phaser 3 top-down chase and avoid game with sufganiyot",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": ["phaser", "phaser3", "game", "hanukah"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "phaser": "^3.70.0"
+  }
+}
