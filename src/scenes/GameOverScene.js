@@ -108,7 +108,13 @@ export default class GameOverScene extends Phaser.Scene {
       padding: { x: 30, y: 15 }
     });
     restartButton.setOrigin(0.5);
-    restartButton.setInteractive({ useHandCursor: true });
+
+    // Make button interactive with explicit hit area
+    const restartBounds = restartButton.getBounds();
+    restartButton.setInteractive(
+      new Phaser.Geom.Rectangle(0, 0, restartBounds.width, restartBounds.height),
+      Phaser.Geom.Rectangle.Contains
+    );
 
     // Button hover effect
     restartButton.on('pointerover', () => {
@@ -134,7 +140,13 @@ export default class GameOverScene extends Phaser.Scene {
       padding: { x: 20, y: 10 }
     });
     menuButton.setOrigin(0.5);
-    menuButton.setInteractive({ useHandCursor: true });
+
+    // Make button interactive with explicit hit area
+    const menuBounds = menuButton.getBounds();
+    menuButton.setInteractive(
+      new Phaser.Geom.Rectangle(0, 0, menuBounds.width, menuBounds.height),
+      Phaser.Geom.Rectangle.Contains
+    );
 
     // Button hover effect
     menuButton.on('pointerover', () => {
