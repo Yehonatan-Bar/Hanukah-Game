@@ -17,7 +17,7 @@ const config = {
     default: 'arcade',
     arcade: {
       debug: false,
-      gravity: { y: 0 }
+      gravity: { y: 800 }
     }
   },
   scene: [BootScene, MainMenuScene, GameScene, GameOverScene],
