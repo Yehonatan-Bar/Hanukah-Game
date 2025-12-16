@@ -108,13 +108,7 @@ export default class GameOverScene extends Phaser.Scene {
       padding: { x: 30, y: 15 }
     });
     restartButton.setOrigin(0.5);
-
-    // Make button interactive with explicit hit area
-    const restartBounds = restartButton.getBounds();
-    restartButton.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, restartBounds.width, restartBounds.height),
-      Phaser.Geom.Rectangle.Contains
-    );
+    restartButton.setInteractive({ useHandCursor: true });
 
     // Button hover effect
     restartButton.on('pointerover', () => {
@@ -129,6 +123,7 @@ export default class GameOverScene extends Phaser.Scene {
 
     // Restart game
     restartButton.on('pointerdown', () => {
+      this.scene.stop('GameOverScene');
       this.scene.start('GameScene');
     });
 
@@ -140,13 +135,7 @@ export default class GameOverScene extends Phaser.Scene {
       padding: { x: 20, y: 10 }
     });
     menuButton.setOrigin(0.5);
-
-    // Make button interactive with explicit hit area
-    const menuBounds = menuButton.getBounds();
-    menuButton.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, menuBounds.width, menuBounds.height),
-      Phaser.Geom.Rectangle.Contains
-    );
+    menuButton.setInteractive({ useHandCursor: true });
 
     // Button hover effect
     menuButton.on('pointerover', () => {
@@ -161,16 +150,26 @@ export default class GameOverScene extends Phaser.Scene {
 
     // Go to main menu
     menuButton.on('pointerdown', () => {
+      this.scene.stop('GameOverScene');
       this.scene.start('MainMenuScene');
     });
 
     // Also allow space or enter to restart
     this.input.keyboard.once('keydown-SPACE', () => {
+      this.scene.stop('GameOverScene');
       this.scene.start('GameScene');
     });
 
     this.input.keyboard.once('keydown-ENTER', () => {
+      this.scene.stop('GameOverScene');
       this.scene.start('GameScene');
     });
+  }
+
+  shutdown() {
+    // Clean up keyboard listeners
+    if (this.input && this.input.keyboard) {
+      this.input.keyboard.removeAllListeners();
+    }
   }
 }
