@@ -9,32 +9,38 @@ export default class Donut {
     if (!scene.textures.exists('donut')) {
       const graphics = scene.add.graphics();
 
-      // Outer circle (donut body)
+      // Outer circle (donut body) - BIGGER!
       graphics.fillStyle(0xd2691e, 1); // Chocolate brown
-      graphics.fillCircle(0, 0, 18);
+      graphics.fillCircle(0, 0, 28);
 
       // Inner circle (hole)
       graphics.fillStyle(0x2d4a7c, 1); // Match background color
-      graphics.fillCircle(0, 0, 8);
+      graphics.fillCircle(0, 0, 12);
 
-      // Add some sprinkles for visual appeal
+      // Add some sprinkles for visual appeal - more and bigger!
       graphics.fillStyle(0xff69b4, 1); // Pink
-      graphics.fillCircle(-8, -5, 2);
-      graphics.fillCircle(7, -6, 2);
+      graphics.fillCircle(-12, -8, 3);
+      graphics.fillCircle(11, -10, 3);
+      graphics.fillCircle(15, 5, 3);
       graphics.fillStyle(0xffff00, 1); // Yellow
-      graphics.fillCircle(-5, 8, 2);
-      graphics.fillCircle(9, 3, 2);
+      graphics.fillCircle(-8, 12, 3);
+      graphics.fillCircle(14, 8, 3);
+      graphics.fillCircle(-15, 0, 3);
       graphics.fillStyle(0x00ff00, 1); // Green
-      graphics.fillCircle(0, -10, 2);
-      graphics.fillCircle(-10, 2, 2);
+      graphics.fillCircle(0, -15, 3);
+      graphics.fillCircle(-15, 5, 3);
+      graphics.fillCircle(8, -13, 3);
+      graphics.fillStyle(0xff0000, 1); // Red
+      graphics.fillCircle(0, 15, 3);
+      graphics.fillCircle(-10, -12, 3);
 
-      graphics.generateTexture('donut', 36, 36);
+      graphics.generateTexture('donut', 56, 56);
       graphics.destroy();
     }
 
     // Create sprite
     this.sprite = scene.physics.add.sprite(x, y, 'donut');
-    this.sprite.setCircle(18); // Circular hitbox
+    this.sprite.setCircle(28); // Circular hitbox - bigger!
     this.target = null;
   }
 

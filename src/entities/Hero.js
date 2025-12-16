@@ -4,17 +4,57 @@ export default class Hero {
   constructor(scene, x, y) {
     this.scene = scene;
 
-    // Create hero sprite using graphics
+    // Create hero sprite - looks like a running person!
     const graphics = scene.add.graphics();
-    graphics.fillStyle(0x4169e1, 1); // Royal blue
-    graphics.fillCircle(0, 0, 20);
-    graphics.generateTexture('hero', 40, 40);
+
+    // Body (torso) - blue shirt
+    graphics.fillStyle(0x4169e1, 1); // Royal blue shirt
+    graphics.fillRect(-8, 0, 16, 20);
+
+    // Head - skin tone
+    graphics.fillStyle(0xffdbac, 1); // Skin tone
+    graphics.fillCircle(0, -8, 10);
+
+    // Eyes - scared expression!
+    graphics.fillStyle(0xffffff, 1); // White of eyes
+    graphics.fillCircle(-4, -10, 3);
+    graphics.fillCircle(4, -10, 3);
+    graphics.fillStyle(0x000000, 1); // Pupils
+    graphics.fillCircle(-3, -10, 2);
+    graphics.fillCircle(5, -10, 2);
+
+    // Mouth - scared "O" shape
+    graphics.lineStyle(2, 0x000000, 1);
+    graphics.strokeCircle(0, -3, 3);
+
+    // Arms - waving in panic!
+    graphics.fillStyle(0xffdbac, 1); // Skin tone for arms
+    graphics.fillRect(-14, 5, 6, 12);  // Left arm
+    graphics.fillRect(8, 5, 6, 12);    // Right arm
+
+    // Legs - running
+    graphics.fillStyle(0x2c5aa0, 1); // Dark blue pants
+    graphics.fillRect(-8, 20, 7, 12);  // Left leg
+    graphics.fillRect(1, 20, 7, 12);   // Right leg
+
+    // Shoes
+    graphics.fillStyle(0x000000, 1); // Black shoes
+    graphics.fillRect(-8, 30, 8, 4);
+    graphics.fillRect(1, 30, 8, 4);
+
+    // Hair - brown messy hair
+    graphics.fillStyle(0x4a2511, 1);
+    graphics.fillCircle(-5, -15, 4);
+    graphics.fillCircle(0, -17, 4);
+    graphics.fillCircle(5, -15, 4);
+
+    graphics.generateTexture('hero', 36, 48);
     graphics.destroy();
 
     // Create sprite
     this.sprite = scene.physics.add.sprite(x, y, 'hero');
     this.sprite.setCollideWorldBounds(true);
-    this.sprite.setCircle(20); // Circular hitbox
+    this.sprite.setCircle(15); // Circular hitbox for body
 
     // Movement properties
     this.speed = 250;
