@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 export default class Hero {
   constructor(scene, x, y) {
     this.scene = scene;
+    this.groundY = y;
 
     // Create hero sprite as a human figure
     const graphics = scene.add.graphics();
@@ -39,75 +40,70 @@ export default class Hero {
     graphics.generateTexture('hero', 40, 50);
     graphics.destroy();
 
-    // Create sprite
+    // Create sprite with physics
     this.sprite = scene.physics.add.sprite(x, y, 'hero');
-    this.sprite.setCollideWorldBounds(true);
     this.sprite.setSize(20, 40); // Rectangle hitbox for person
     this.sprite.setOffset(10, 5);
+    this.sprite.setGravityY(0); // Hero uses world gravity
 
-    // Movement properties
-    this.speed = 250;
-    this.cursors = null;
-    this.wasd = null;
-    this.joystickInput = { x: 0, y: 0 };
+    // Jumping properties
+    this.jumpVelocity = -450;
+    this.isJumping = false;
+    this.isOnGround = true;
+
+    // Setup controls
+    this.setupControls();
   }
 
-  setupKeyboardControls() {
-    // Arrow keys
-    this.cursors = this.scene.input.keyboard.createCursorKeys();
+  setupControls() {
+    // Spacebar for jump
+    this.spaceKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-    // WASD keys
-    this.wasd = this.scene.input.keyboard.addKeys({
-      up: Phaser.Input.Keyboard.KeyCodes.W,
-      down: Phaser.Input.Keyboard.KeyCodes.S,
-      left: Phaser.Input.Keyboard.KeyCodes.A,
-      right: Phaser.Input.Keyboard.KeyCodes.D
+    // Click/tap for jump
+    this.scene.input.on('pointerdown', () => {
+      this.jump();
     });
   }
 
-  setJoystickInput(x, y) {
-    this.joystickInput.x = x;
-    this.joystickInput.y = y;
+  jump() {
+    // Only jump if on ground
+    if (this.isOnGround && !this.isJumping) {
+      this.sprite.setVelocityY(this.jumpVelocity);
+      this.isJumping = true;
+      this.isOnGround = false;
+    }
   }
 
   update() {
-    let velocityX = 0;
-    let velocityY = 0;
-
-    // Check keyboard input
-    if (this.cursors || this.wasd) {
-      if (this.cursors.left.isDown || this.wasd.left.isDown) {
-        velocityX = -1;
-      } else if (this.cursors.right.isDown || this.wasd.right.isDown) {
-        velocityX = 1;
-      }
-
-      if (this.cursors.up.isDown || this.wasd.up.isDown) {
-        velocityY = -1;
-      } else if (this.cursors.down.isDown || this.wasd.down.isDown) {
-        velocityY = 1;
-      }
+    // Check if spacebar is pressed
+    if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
+      this.jump();
     }
 
-    // Check joystick input (overrides keyboard if active)
-    if (Math.abs(this.joystickInput.x) > 0.1 || Math.abs(this.joystickInput.y) > 0.1) {
-      velocityX = this.joystickInput.x;
-      velocityY = this.joystickInput.y;
+    // Check if hero has landed
+    if (this.sprite.y >= this.groundY && this.sprite.body.velocity.y >= 0) {
+      this.sprite.y = this.groundY;
+      this.sprite.setVelocityY(0);
+      this.isJumping = false;
+      this.isOnGround = true;
     }
 
-    // Normalize diagonal movement
-    if (velocityX !== 0 && velocityY !== 0) {
-      const length = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-      velocityX /= length;
-      velocityY /= length;
+    // Slight rotation when jumping (optional visual effect)
+    if (this.isJumping) {
+      // Tilt slightly forward when jumping
+      this.sprite.angle = Phaser.Math.Clamp(this.sprite.body.velocity.y * 0.02, -15, 15);
+    } else {
+      // Return to upright when on ground
+      this.sprite.angle = 0;
     }
-
-    // Apply velocity
-    this.sprite.setVelocity(velocityX * this.speed, velocityY * this.speed);
   }
 
   getSprite() {
     return this.sprite;
+  }
+
+  isGrounded() {
+    return this.isOnGround;
   }
 
   destroy() {

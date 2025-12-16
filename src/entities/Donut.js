@@ -34,36 +34,37 @@ export default class Donut {
 
     // Create sprite
     this.sprite = scene.physics.add.sprite(x, y, 'donut');
-    this.sprite.setCircle(28); // Circular hitbox - bigger!
-    this.target = null;
-  }
-
-  setTarget(target) {
-    this.target = target;
+    this.sprite.setCircle(28); // Circular hitbox
+    this.sprite.setGravityY(-800); // Cancel world gravity for obstacles
+    this.passed = false; // Track if hero has passed this obstacle
   }
 
   update() {
-    if (!this.target || !this.sprite.active) return;
+    if (!this.sprite.active) return;
 
-    // Simple steering behavior to chase the target
-    const dx = this.target.x - this.sprite.x;
-    const dy = this.target.y - this.sprite.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
+    // Move left (scrolling)
+    this.sprite.x -= this.speed;
 
-    if (distance > 0) {
-      // Normalize and apply speed
-      const velocityX = (dx / distance) * this.speed;
-      const velocityY = (dy / distance) * this.speed;
+    // Rotate donut while moving for visual effect
+    this.sprite.rotation += 0.02;
 
-      this.sprite.setVelocity(velocityX, velocityY);
-
-      // Rotate donut slightly while moving for visual effect
-      this.sprite.rotation += 0.02;
+    // Destroy if off screen
+    if (this.sprite.x < -100) {
+      this.destroy();
     }
   }
 
   getSprite() {
     return this.sprite;
+  }
+
+  hasPassed(heroX) {
+    // Check if the obstacle has been passed by the hero
+    if (!this.passed && this.sprite.x < heroX) {
+      this.passed = true;
+      return true;
+    }
+    return false;
   }
 
   destroy() {

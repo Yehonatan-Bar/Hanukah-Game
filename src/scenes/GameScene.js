@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import Hero from '../entities/Hero';
-import DonutSpawner from '../managers/DonutSpawner';
-import VirtualJoystick from '../ui/VirtualJoystick';
+import ObstacleManager from '../managers/ObstacleManager';
+import ScrollingBackground from '../managers/ScrollingBackground';
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -16,29 +16,24 @@ export default class GameScene extends Phaser.Scene {
     this.score = 0;
     this.gameOver = false;
     this.startTime = this.time.now;
+    this.difficultyTimer = 0;
 
-    // Create hero at center
-    this.hero = new Hero(this, width / 2, height / 2);
-    this.hero.setupKeyboardControls();
+    // Create scrolling background
+    this.scrollingBackground = new ScrollingBackground(this, width, height);
 
-    // Create donut spawner
-    this.donutSpawner = new DonutSpawner(this, width, height);
-    this.donutSpawner.setTarget(this.hero.getSprite());
+    // Create hero on the left side of screen at ground level
+    const heroX = 150;
+    const groundY = height - 80;
+    this.hero = new Hero(this, heroX, groundY);
+
+    // Create obstacle manager
+    this.obstacleManager = new ObstacleManager(this, width, height);
 
     // Setup collision detection
     this.setupCollisions();
 
     // Create UI
     this.createUI();
-
-    // Setup virtual joystick for mobile
-    const isMobile = this.sys.game.device.os.android || this.sys.game.device.os.iOS;
-    if (isMobile || this.sys.game.device.input.touch) {
-      this.joystick = new VirtualJoystick(this, 100, height - 100);
-    }
-
-    // Setup world bounds
-    this.physics.world.setBounds(0, 0, width, height);
   }
 
   createUI() {
@@ -85,55 +80,51 @@ export default class GameScene extends Phaser.Scene {
   update(time, delta) {
     if (this.gameOver) return;
 
+    // Update background scrolling
+    this.scrollingBackground.update();
+
     // Update hero
-    if (this.joystick) {
-      const input = this.joystick.getInput();
-      this.hero.setJoystickInput(input.x, input.y);
-    }
     this.hero.update();
 
-    // Update donut spawner
-    this.donutSpawner.update(time);
+    // Update obstacle manager
+    this.obstacleManager.update(time);
 
-    // Update score based on time survived
+    // Update difficulty (increase speed over time)
+    this.difficultyTimer += delta;
+    if (this.difficultyTimer > 10000) { // Every 10 seconds
+      this.difficultyTimer = 0;
+      this.obstacleManager.increaseSpeed(0.2);
+      this.scrollingBackground.setScrollSpeed(this.scrollingBackground.scrollSpeed + 0.2);
+    }
+
+    // Update time display
     const timeAlive = Math.floor((time - this.startTime) / 1000);
-    this.score = timeAlive * 10;
-    this.scoreText.setText(`Score: ${this.score}`);
     this.timeText.setText(`Time: ${timeAlive}s`);
 
-    // Check collisions with donuts
+    // Check collisions with obstacles
     const heroSprite = this.hero.getSprite();
-    const donuts = this.donutSpawner.getDonuts();
+    const obstacles = this.obstacleManager.getObstacles();
 
-    for (let donut of donuts) {
-      const donutSprite = donut.getSprite();
-      if (this.physics.overlap(heroSprite, donutSprite)) {
-        this.handleGameOver();
-        break;
+    for (let obstacle of obstacles) {
+      const obstacleSprite = obstacle.getSprite();
+
+      // Check if hero passed the obstacle (award points)
+      if (obstacle.hasPassed(heroSprite.x)) {
+        this.score += 10;
+        this.scoreText.setText(`Score: ${this.score}`);
+        this.showScoreText(obstacleSprite.x, obstacleSprite.y);
       }
 
-      // Optional: near miss bonus (if donut gets close but doesn't hit)
-      const distance = Phaser.Math.Distance.Between(
-        heroSprite.x,
-        heroSprite.y,
-        donutSprite.x,
-        donutSprite.y
-      );
-
-      // Award small bonus for very close calls
-      if (distance < 50 && distance > 40) {
-        if (!donutSprite.getData('nearMissAwarded')) {
-          this.score += 5;
-          donutSprite.setData('nearMissAwarded', true);
-          // Visual feedback
-          this.showNearMissText(heroSprite.x, heroSprite.y);
-        }
+      // Check collision
+      if (this.physics.overlap(heroSprite, obstacleSprite)) {
+        this.handleGameOver();
+        break;
       }
     }
   }
 
-  showNearMissText(x, y) {
-    const text = this.add.text(x, y - 30, '+5', {
+  showScoreText(x, y) {
+    const text = this.add.text(x, y - 30, '+10', {
       font: 'bold 16px Arial',
       fill: '#00ff00'
     });
@@ -176,14 +167,14 @@ export default class GameScene extends Phaser.Scene {
   }
 
   cleanup() {
-    // Clean up spawner
-    if (this.donutSpawner) {
-      this.donutSpawner.destroy();
+    // Clean up obstacle manager
+    if (this.obstacleManager) {
+      this.obstacleManager.destroy();
     }
 
-    // Clean up joystick
-    if (this.joystick) {
-      this.joystick.destroy();
+    // Clean up scrolling background
+    if (this.scrollingBackground) {
+      this.scrollingBackground.destroy();
     }
 
     // Clean up hero
