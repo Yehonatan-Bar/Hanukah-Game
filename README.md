@@ -2,6 +2,10 @@
 
 A fun, mobile-friendly Phaser 3 game where you control a hero avoiding sufganiyot (Jewish donuts) for as long as possible! The longer you survive, the higher your score.
 
+**🎮 Play the game live at: [https://yehonatan-bar.github.io/Hanukah-Game/](https://yehonatan-bar.github.io/Hanukah-Game/)**
+
+> **Deployment**: This game is automatically deployed to GitHub Pages when changes are merged to the `main` branch.
+
 ## Features
 
 - 🎮 Smooth 8-direction movement
@@ -164,12 +168,11 @@ npm run deploy
 
 ### Important Notes for GitHub Pages
 
-- The `vite.config.js` is already configured with `base: './'` for relative paths
-- This ensures assets load correctly on GitHub Pages
-- If deploying to a subfolder, update the base path in `vite.config.js`:
-  ```javascript
-  base: '/repository-name/'
-  ```
+- The `vite.config.js` is already configured with `base: '/Hanukah-Game/'` for GitHub Pages deployment
+- This ensures assets load correctly at `https://yehonatan-bar.github.io/Hanukah-Game/`
+- The GitHub Actions workflow is already set up in `.github/workflows/deploy.yml`
+- Simply merge your changes to the `main` branch and the deployment will happen automatically
+- **First-time setup**: Go to your repository **Settings > Pages** and select **GitHub Actions** as the source
 
 ## Project Structure
 
