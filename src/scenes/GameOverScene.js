@@ -61,8 +61,8 @@ export default class GameOverScene extends Phaser.Scene {
       ease: 'Back.easeOut'
     });
 
-    // Final score
-    const scoreText = this.add.text(width / 2, height / 2 - 40, `Your Score: ${this.finalScore}`, {
+    // Final score (moved lower to not overlap funny messages)
+    const scoreText = this.add.text(width / 2, height / 2 + 40, `Your Score: ${this.finalScore}`, {
       font: 'bold 32px Arial',
       fill: '#ffffff',
       stroke: '#000000',
@@ -72,7 +72,7 @@ export default class GameOverScene extends Phaser.Scene {
 
     // Best score
     const bestScore = localStorage.getItem('bestScore') || 0;
-    const bestScoreText = this.add.text(width / 2, height / 2 + 10, `Best Score: ${bestScore}`, {
+    const bestScoreText = this.add.text(width / 2, height / 2 + 85, `Best Score: ${bestScore}`, {
       font: 'bold 28px Arial',
       fill: '#ffff00',
       stroke: '#000000',
@@ -82,7 +82,7 @@ export default class GameOverScene extends Phaser.Scene {
 
     // New high score message
     if (this.finalScore >= bestScore && this.finalScore > 0) {
-      const newHighScore = this.add.text(width / 2, height / 2 + 50, '🎉 NEW HIGH SCORE! 🎉', {
+      const newHighScore = this.add.text(width / 2, height / 2 + 125, '🎉 NEW HIGH SCORE! 🎉', {
         font: 'bold 24px Arial',
         fill: '#00ff00',
         stroke: '#000000',
@@ -101,7 +101,7 @@ export default class GameOverScene extends Phaser.Scene {
     }
 
     // Restart button
-    const restartButton = this.add.text(width / 2, height / 2 + 120, 'RESTART', {
+    const restartButton = this.add.text(width / 2, height - 110, 'RESTART', {
       font: 'bold 36px Arial',
       fill: '#ffffff',
       backgroundColor: '#4CAF50',
@@ -127,7 +127,7 @@ export default class GameOverScene extends Phaser.Scene {
     });
 
     // Main menu button
-    const menuButton = this.add.text(width / 2, height / 2 + 190, 'Main Menu', {
+    const menuButton = this.add.text(width / 2, height - 40, 'Main Menu', {
       font: 'bold 24px Arial',
       fill: '#ffffff',
       backgroundColor: '#2196F3',
