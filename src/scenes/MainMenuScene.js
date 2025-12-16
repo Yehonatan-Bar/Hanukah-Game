@@ -41,7 +41,13 @@ export default class MainMenuScene extends Phaser.Scene {
       padding: { x: 20, y: 10 }
     });
     startButton.setOrigin(0.5);
-    startButton.setInteractive({ useHandCursor: true });
+
+    // Make button interactive with explicit hit area
+    const bounds = startButton.getBounds();
+    startButton.setInteractive(
+      new Phaser.Geom.Rectangle(0, 0, bounds.width, bounds.height),
+      Phaser.Geom.Rectangle.Contains
+    );
 
     // Button hover effect
     startButton.on('pointerover', () => {
